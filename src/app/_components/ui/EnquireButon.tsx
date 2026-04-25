@@ -11,16 +11,16 @@ export const EnquireButton = () => {
 
   return (
     <>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-600 text-white w-full px-8 py-3 rounded-lg font-bold">
-        Enquire Now
-      </button>
-
       <EnquiryModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-600 text-white w-full px-8 py-3 rounded-lg font-bold mr-2">
+        Enquire Now
+      </button>
+
 
       <button
         onClick={() => router.push("/showData")}

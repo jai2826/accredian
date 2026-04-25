@@ -1,37 +1,34 @@
 "use server";
 
-import fs from "fs";
-import path from "path";
 import { EnquirySchema, EnquiryInput } from "@/lib/schema";
+import supabase from "@/utils/supabase/server";
 
 export async function submitEnquiry(data: EnquiryInput) {
   const validation = EnquirySchema.safeParse(data);
   if (!validation.success)
-    return { success: false, error: "Invalid data" };
+    return { success: false, error: "Validation failed" };
 
   try {
-    const filePath = path.join(
-      process.cwd(),
-      "data",
-      `${data.name}.json`,
-    );
+    const { error } = await supabase
+      .from("Enquiries")
+      .insert([
+        {
+          name: validation.data.name,
+          email: validation.data.email,
+          phone: validation.data.phone,
+          company_name: validation.data.companyName,
+          domain: validation.data.domain,
+          candidates: validation.data.candidateCount,
+          delivery_mode: validation.data.modeOfDelivery,
+          location: validation.data.location,
+        },
+      ]);
 
-    if (!fs.existsSync(path.join(process.cwd(), "data"))) {
-      fs.mkdirSync(path.join(process.cwd(), "data"));
-    }
-    const row = JSON.stringify({
-      timestamp: new Date().toISOString(),
-      ...data,
-    });
+    if (error) throw error;
 
-    fs.appendFileSync(filePath, row);
-
-    return { success: true, message: "Data saved to CSV!" };
-  } catch (error) {
-    console.error("FS Error:", error);
-    return {
-      success: false,
-      error: "Failed to write to file",
-    };
+    return { success: true };
+  } catch (err: any) {
+    console.error("Database Error:", err.message);
+    return { success: false, error: "Submission failed." };
   }
 }
