@@ -19,7 +19,7 @@ export const CatSection = () => {
        
         <div className="w-full flex justify-center px-4 md:px-8">
           <img
-            src="/catv2.svg"
+            src="/CatHeader.svg"
             alt="The CAT Framework Methodology"
            
             className="w-full max-w-4xl lg:max-w-5xl h-auto object-contain drop-shadow-md"
