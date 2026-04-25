@@ -1,19 +1,61 @@
 "use client";
 
+import { EnquiryInput, EnquirySchema } from '@/lib/schema';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { X } from 'lucide-react';
 import { Fragment } from 'react';
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { submitEnquiry } from "@/app/actions/enquiry";
+import { cn } from '@/lib/utils'; // Assuming you have a cn utility
 
 type EnquiryModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
+type EnquiryFormValues = z.input<typeof EnquirySchema>;
+
 export const EnquiryModal = ({ isOpen, onClose }: EnquiryModalProps) => {
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors, isSubmitting }, 
+    reset 
+  } = useForm<EnquiryFormValues, undefined, EnquiryInput>({
+    resolver: zodResolver(EnquirySchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      companyName: "",
+      domain: "",
+      candidateCount: 0,
+      modeOfDelivery: "",
+      location: ""
+    }
+  });
+
+  const onSubmit = async (data: EnquiryInput) => {
+    const result = await submitEnquiry(data);
+    if (result.success) {
+      alert("Enquiry submitted successfully!");
+      reset();
+      onClose();
+    } else {
+      alert(result.error || "Something went wrong");
+    }
+  };
+
+  // Helper component to keep code clean and show error messages
+  const InputError = ({ name }: { name: keyof EnquiryInput }) => (
+    errors[name] ? <span className="text-[10px] text-red-500 mt-1">{errors[name]?.message}</span> : null
+  );
+
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-[100]" onClose={onClose}>
-       
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -37,10 +79,9 @@ export const EnquiryModal = ({ isOpen, onClose }: EnquiryModalProps) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-             
               <DialogPanel className="flex w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl">
                 
-              
+                {/* Left Side Image */}
                 <div className="hidden md:block w-5/12 relative">
                   <img 
                     src="business-v2.webp" 
@@ -50,7 +91,7 @@ export const EnquiryModal = ({ isOpen, onClose }: EnquiryModalProps) => {
                   <div className="absolute inset-0 bg-blue-900/10" />
                 </div>
 
-              
+                {/* Form Container */}
                 <div className="w-full md:w-7/12 p-6 md:p-10 relative">
                   <button 
                     onClick={onClose}
@@ -63,42 +104,72 @@ export const EnquiryModal = ({ isOpen, onClose }: EnquiryModalProps) => {
                     Enquire Now
                   </DialogTitle>
 
-                  <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
-                  
-                    <input type="text" placeholder="Enter Name" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
-                    <input type="email" placeholder="Enter Email" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
+                  {/* USE THE handleSubmit WRAPPER HERE */}
+                  <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                     
-                  
-                    <div className="flex items-center gap-3 border-b border-gray-300 py-3">
-                      <div className="flex items-center gap-1 shrink-0">
-                        <img src="https://flagcdn.com/in.svg" className="w-5 h-3.5 object-cover" alt="India flag" />
-                        <span className="text-sm font-medium text-gray-700">+91</span>
-                      </div>
-                      <input type="tel" placeholder="Mobile Number" className="w-full focus:outline-none text-sm" />
+                    <div>
+                      <input {...register("name")} type="text" placeholder="Enter Name" className={cn("w-full border-b py-3 focus:outline-none transition-colors text-sm", errors.name ? "border-red-500" : "border-gray-300 focus:border-blue-600")} />
+                      <InputError name="name" />
                     </div>
 
-                    <input type="text" placeholder="Enter company name" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
+                    <div>
+                      <input {...register("email")} type="email" placeholder="Enter Email" className={cn("w-full border-b py-3 focus:outline-none transition-colors text-sm", errors.email ? "border-red-500" : "border-gray-300 focus:border-blue-600")} />
+                      <InputError name="email" />
+                    </div>
                     
-                   
-                    <select className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm bg-transparent appearance-none">
-                      <option value="">Select Domain</option>
-                    </select>
+                    <div className="flex flex-col border-b border-gray-300 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 shrink-0">
+                          <img src="https://flagcdn.com/in.svg" className="w-5 h-3.5 object-cover" alt="India flag" />
+                          <span className="text-sm font-medium text-gray-700">+91</span>
+                        </div>
+                        <input {...register("phone")} type="tel" placeholder="Mobile Number" className="w-full focus:outline-none text-sm" />
+                      </div>
+                      <InputError name="phone" />
+                    </div>
 
-                    <input type="number" placeholder="Enter No. of candidates" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
+                    <div>
+                      <input {...register("companyName")} type="text" placeholder="Enter company name" className={cn("w-full border-b py-3 focus:outline-none transition-colors text-sm", errors.companyName ? "border-red-500" : "border-gray-300 focus:border-blue-600")} />
+                      <InputError name="companyName" />
+                    </div>
 
-                    <select className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm bg-transparent appearance-none">
-                      <option value="">Select Mode of Delivery *</option>
-                    </select>
+                    <div>
+                      <select {...register("domain")} className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm bg-transparent appearance-none">
+                        <option value="">Select Domain</option>
+                        <option value="tech">Technology</option>
+                        <option value="business">Business</option>
+                        <option value="data">Data Science</option>
+                      </select>
+                      <InputError name="domain" />
+                    </div>
 
-                    <input type="text" placeholder="Eg: Gurgaon, Delhi, India" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
+                    <div>
+                      <input {...register("candidateCount", { valueAsNumber: true })} type="number" placeholder="Enter No. of candidates" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
+                      <InputError name="candidateCount" />
+                    </div>
 
-                 
-                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] mt-4">
-                      Submit
+                    <div>
+                      <select {...register("modeOfDelivery")} className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm bg-transparent appearance-none">
+                        <option value="">Select Mode of Delivery *</option>
+                        <option value="online">Online</option>
+                        <option value="offline">Offline / In-person</option>
+                      </select>
+                      <InputError name="modeOfDelivery" />
+                    </div>
+
+                    <div>
+                      <input {...register("location")} type="text" placeholder="Eg: Gurgaon, Delhi, India" className="w-full border-b border-gray-300 py-3 focus:border-blue-600 focus:outline-none transition-colors text-sm" />
+                      <InputError name="location" />
+                    </div>
+
+                    <button 
+                      disabled={isSubmitting}
+                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] mt-4"
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit"}
                     </button>
                   </form>
                 </div>
-
               </DialogPanel>
             </TransitionChild>
           </div>

@@ -1,4 +1,4 @@
-import { CTAButton } from "@/app/_components/ui/CTAButton";
+import {  EnquireButton } from "@/app/_components/ui/EnquireButon";
 import {
   FaFacebook,
   FaInstagram,
@@ -92,7 +92,7 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-3">
-            <CTAButton />
+            <EnquireButton />
             <p className="text-gray-500 text-xs md:text-sm font-medium">
               Speak with our{" "}
               <span className="text-blue-600 cursor-pointer hover:underline">

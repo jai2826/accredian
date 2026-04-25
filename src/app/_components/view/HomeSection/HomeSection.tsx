@@ -1,4 +1,4 @@
-import { CTAButton } from "@/app/_components/ui/CTAButton";
+import { EnquireButton } from "@/app/_components/ui/EnquireButon";
 import { CircleCheckIcon } from "lucide-react";
 
 export const HomeSection = () => {
@@ -42,7 +42,7 @@ export const HomeSection = () => {
         </ul>
 
         <div className="flex mx-auto w-full  max-w-md items-center justify-center lg:justify-start  pt-2">
-          <CTAButton  />
+          <EnquireButton  />
         </div>
       </div>
 

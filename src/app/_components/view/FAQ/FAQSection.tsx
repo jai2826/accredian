@@ -1,10 +1,10 @@
 "use client";
 
+import { EnquireButton } from "@/app/_components/ui/EnquireButon";
 import { SectionHeader } from "@/app/_components/ui/SectionHeader";
 import { useState } from "react";
 import { FAQCategories } from "./components/FAQCategories";
 import { FAQItem } from "./components/FAQItem";
-import { CTAButton } from "@/app/_components/ui/CTAButton";
 
 const FAQ_DATA = {
   course: [
@@ -99,7 +99,7 @@ export const FAQSection = () => {
 
         {}
         <div className="mt-12 max-w-md w-full mx-auto flex justify-center">
-          <CTAButton />
+          <EnquireButton />
         </div>
       </div>
     </section>

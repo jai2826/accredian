@@ -1,10 +1,13 @@
 "use client";
 
+import { ArrowRightIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { EnquiryModal } from "./EnquiryModal";
 
-export const CTAButton = () => {
+export const EnquireButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -18,6 +21,12 @@ export const CTAButton = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      <button
+        onClick={() => router.push("/showData")}
+        className="bg-red-500 text-white w-fit p-3 rounded-lg font-bold">
+        <ArrowRightIcon className="inline-block" />
+      </button>
     </>
   );
 };
