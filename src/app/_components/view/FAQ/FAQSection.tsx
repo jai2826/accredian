@@ -98,7 +98,7 @@ export const FAQSection = () => {
         </div>
 
         {}
-        <div className="mt-12 w-md flex justify-center">
+        <div className="mt-12 max-w-md w-full mx-auto flex justify-center">
           <CTAButton />
         </div>
       </div>

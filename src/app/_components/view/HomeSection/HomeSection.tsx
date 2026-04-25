@@ -41,7 +41,7 @@ export const HomeSection = () => {
           ))}
         </ul>
 
-        <div className="flex w-md justify-center md:justify-start pt-4">
+        <div className="flex mx-auto w-full  max-w-md items-center justify-center lg:justify-start  pt-2">
           <CTAButton  />
         </div>
       </div>
